@@ -12,8 +12,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 
 /// Default registry URL
-pub const DEFAULT_REGISTRY: &str =
-    "https://raw.githubusercontent.com/harmony-labs/meta-plugins/main";
+pub const DEFAULT_REGISTRY: &str = "https://raw.githubusercontent.com/gitkb/meta-plugins/main";
 
 /// Plugin name prefix (all plugins must start with this)
 pub const PLUGIN_PREFIX: &str = "meta-";
@@ -2036,8 +2035,8 @@ mod tests {
     // === M6: Simple registry tests ===
 
     #[test]
-    fn test_default_registry_points_to_harmony_labs() {
-        assert!(DEFAULT_REGISTRY.contains("harmony-labs"));
+    fn test_default_registry_points_to_gitkb() {
+        assert!(DEFAULT_REGISTRY.contains("gitkb"));
         assert!(DEFAULT_REGISTRY.contains("meta-plugins"));
     }
 

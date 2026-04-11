@@ -418,12 +418,7 @@ fn register_marketplace(verbose: bool) {
 
     // Register the marketplace (idempotent)
     let result = Command::new("claude")
-        .args([
-            "plugin",
-            "marketplace",
-            "add",
-            "harmony-labs/claude-plugins",
-        ])
+        .args(["plugin", "marketplace", "add", "gitkb/claude-plugins"])
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::null())
         .status();
@@ -431,10 +426,10 @@ fn register_marketplace(verbose: bool) {
     match result {
         Ok(status) if status.success() => {
             println!();
-            println!("{} Registered Harmony Labs plugin marketplace", "✓".green());
+            println!("{} Registered GitKB plugin marketplace", "✓".green());
             println!(
                 "  Run {} for global plugin access",
-                "claude plugin install meta@harmony-labs".cyan()
+                "claude plugin install meta@gitkb".cyan()
             );
         }
         _ => {
