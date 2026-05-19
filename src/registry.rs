@@ -2036,8 +2036,10 @@ mod tests {
 
     #[test]
     fn test_default_registry_points_to_gitkb() {
-        assert!(DEFAULT_REGISTRY.contains("gitkb"));
-        assert!(DEFAULT_REGISTRY.contains("meta-plugins"));
+        assert_eq!(
+            DEFAULT_REGISTRY,
+            "https://raw.githubusercontent.com/gitkb/meta-plugins/main"
+        );
     }
 
     #[test]

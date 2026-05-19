@@ -224,9 +224,20 @@ fn install_claude_integration_to(
         println!("  Skills:  .claude/skills/ ({} skill files)", SKILLS.len());
         println!("  Rules:   .claude/rules/ ({} rule files)", RULES.len());
         println!("  Hooks:   .claude/settings.json (SessionStart, PreToolUse, PreCompact)");
+        println!("  Note:    PreToolUse hooks require the standalone agent CLI (`agent guard`).");
     }
 
-    // Try to register Harmony Labs marketplace if claude CLI is available
+    #[cfg(not(test))]
+    if (installed > 0 || merged) && !agent_cli_available() {
+        println!(
+            "{}",
+            "Warning: 'agent' CLI not found. PreToolUse hooks require the standalone agent tool."
+                .yellow()
+        );
+        println!("Install from: https://github.com/gitkb/agent");
+    }
+
+    // Try to register GitKB marketplace if claude CLI is available
     // Skip in tests to avoid external CLI calls that slow down test execution
     #[cfg(not(test))]
     register_marketplace(verbose);
@@ -305,7 +316,7 @@ fn build_meta_hooks() -> Map<String, Value> {
             "matcher": "Bash",
             "hooks": [{
                 "type": "command",
-                "command": "meta agent guard",
+                "command": "agent guard",
                 "timeout": 5
             }]
         }]),
@@ -391,7 +402,20 @@ fn hooks_equal(a: &Value, b: &Value) -> bool {
     }
 }
 
-/// Register the Harmony Labs marketplace with Claude Code (if available).
+#[cfg(not(test))]
+fn agent_cli_available() -> bool {
+    use std::process::{Command, Stdio};
+
+    Command::new("agent")
+        .arg("--version")
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+}
+
+/// Register the GitKB marketplace with Claude Code (if available).
 /// This is best-effort — if `claude` is not on PATH, skip silently.
 #[cfg(not(test))]
 fn register_marketplace(verbose: bool) {
@@ -500,7 +524,7 @@ mod tests {
         assert!(settings_content.contains("PreToolUse"));
         assert!(settings_content.contains("PreCompact"));
         assert!(settings_content.contains("meta context"));
-        assert!(settings_content.contains("meta agent guard"));
+        assert!(settings_content.contains("agent guard"));
     }
 
     #[test]
@@ -739,13 +763,13 @@ mod tests {
             .unwrap()
             .contains("meta context"));
 
-        // PreToolUse should have Bash matcher and call meta agent guard
+        // PreToolUse should have Bash matcher and call agent guard
         let pre_tool = &hooks["PreToolUse"];
         assert_eq!(pre_tool[0]["matcher"], "Bash");
         assert!(pre_tool[0]["hooks"][0]["command"]
             .as_str()
             .unwrap()
-            .contains("meta agent guard"));
+            .contains("agent guard"));
 
         // PreCompact should call meta context
         let pre_compact = &hooks["PreCompact"];
