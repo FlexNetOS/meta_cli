@@ -1332,6 +1332,10 @@ fn check_and_warn_orphan() {
         Err(_) => return,
     };
 
+    if worktree::detect_worktree_context(&current_dir).is_some() {
+        return;
+    }
+
     // Find the nearest .meta config
     let Some((config_path, _)) = find_meta_config(&current_dir, None) else {
         return;
