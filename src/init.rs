@@ -234,7 +234,7 @@ fn install_claude_integration_to(
             "Warning: 'agent' CLI not found. PreToolUse hooks require the standalone agent tool."
                 .yellow()
         );
-        println!("Install from: https://github.com/gitkb/agent");
+        println!("Install from: https://github.com/FlexNetOS/agent");
     }
 
     // Try to register GitKB marketplace if claude CLI is available
@@ -442,7 +442,7 @@ fn register_marketplace(verbose: bool) {
 
     // Register the marketplace (idempotent)
     let result = Command::new("claude")
-        .args(["plugin", "marketplace", "add", "gitkb/claude-plugins"])
+        .args(["plugin", "marketplace", "add", "FlexNetOS/claude-plugins"])
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::null())
         .status();

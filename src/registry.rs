@@ -12,7 +12,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 
 /// Default registry URL
-pub const DEFAULT_REGISTRY: &str = "https://raw.githubusercontent.com/gitkb/meta-plugins/main";
+pub const DEFAULT_REGISTRY: &str = "https://raw.githubusercontent.com/FlexNetOS/meta-plugins/main";
 
 /// Plugin name prefix (all plugins must start with this)
 pub const PLUGIN_PREFIX: &str = "meta-";
@@ -2035,10 +2035,10 @@ mod tests {
     // === M6: Simple registry tests ===
 
     #[test]
-    fn test_default_registry_points_to_gitkb() {
+    fn test_default_registry_points_to_flexnetos() {
         assert_eq!(
             DEFAULT_REGISTRY,
-            "https://raw.githubusercontent.com/gitkb/meta-plugins/main"
+            "https://raw.githubusercontent.com/FlexNetOS/meta-plugins/main"
         );
     }
 
