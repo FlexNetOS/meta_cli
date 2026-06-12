@@ -17,12 +17,14 @@ const SKILL_META_EXEC: &str = include_str!("../.claude/skills/meta-exec.md");
 const SKILL_META_PLUGINS: &str = include_str!("../.claude/skills/meta-plugins.md");
 const SKILL_META_WORKTREE: &str = include_str!("../.claude/skills/meta-worktree.md");
 const SKILL_META_SAFETY: &str = include_str!("../.claude/skills/meta-safety.md");
+const SKILL_META_OLLAMA: &str = include_str!("../.claude/skills/meta-ollama.md");
 
 /// Embedded rule files (always-loaded, survive compaction)
 const RULE_WORKSPACE_DISCIPLINE: &str =
     include_str!("../.claude/rules/meta-workspace-discipline.md");
 const RULE_DESTRUCTIVE_COMMANDS: &str =
     include_str!("../.claude/rules/meta-destructive-commands.md");
+const RULE_OLLAMA_PROVIDER: &str = include_str!("../.claude/rules/ollama-provider.md");
 
 /// All available skills with their filenames
 const SKILLS: &[(&str, &str)] = &[
@@ -34,10 +36,18 @@ const SKILLS: &[(&str, &str)] = &[
     ("meta-safety.md", SKILL_META_SAFETY),
 ];
 
+const SKILLS_OLLAMA: &[(&str, &str)] = &[
+    ("meta-ollama.md", SKILL_META_OLLAMA),
+];
+
 /// All available rules with their filenames
 const RULES: &[(&str, &str)] = &[
     ("meta-workspace-discipline.md", RULE_WORKSPACE_DISCIPLINE),
     ("meta-destructive-commands.md", RULE_DESTRUCTIVE_COMMANDS),
+];
+
+const RULES_OLLAMA: &[(&str, &str)] = &[
+    ("ollama-provider.md", RULE_OLLAMA_PROVIDER),
 ];
 
 /// Typed init subcommand, mirroring the clap-parsed structure from main.
@@ -51,6 +61,13 @@ pub enum InitCommand {
         /// Update skills and rules only, skip settings (preserves user customizations)
         update: bool,
     },
+    /// Install Ollama-specific skills and rules
+    Ollama {
+        /// Overwrite all existing files
+        force: bool,
+        /// Update skills and rules only
+        update: bool,
+    },
 }
 
 /// Handle the `meta init` subcommand with typed args.
@@ -61,6 +78,7 @@ pub fn handle_init_command(command: InitCommand, verbose: bool) -> Result<()> {
             Ok(())
         }
         InitCommand::Claude { force, update } => install_claude_integration(force, update, verbose),
+        InitCommand::Ollama { force, update } => install_ollama_integration(force, update, verbose),
     }
 }
 
@@ -72,6 +90,7 @@ fn print_init_help() {
     println!();
     println!("COMMANDS:");
     println!("    claude    Install Claude Code skills, rules, and hooks for this meta repo");
+    println!("    ollama    Install Ollama-specific skills and rules for this meta repo");
     println!();
     println!("OPTIONS:");
     println!("    -f, --force     Overwrite all existing files including settings");
@@ -87,6 +106,78 @@ fn print_init_help() {
 fn install_claude_integration(force: bool, update: bool, verbose: bool) -> Result<()> {
     let current_dir = std::env::current_dir()?;
     install_claude_integration_to(&current_dir, force, update, verbose)
+}
+
+/// Install Ollama-specific skills and rules
+fn install_ollama_integration(force: bool, update: bool, verbose: bool) -> Result<()> {
+    let current_dir = std::env::current_dir()?;
+    install_ollama_integration_to(&current_dir, force, update, verbose)
+}
+
+/// Install Ollama-specific skills and rules to a specific directory
+fn install_ollama_integration_to(
+    target_dir: &Path,
+    force: bool,
+    update: bool,
+    verbose: bool,
+) -> Result<()> {
+    let claude_dir = target_dir.join(".claude");
+    let skills_dir = claude_dir.join("skills");
+    let rules_dir = claude_dir.join("rules");
+
+    // Check if this looks like a meta repo
+    let has_meta_config = target_dir.join(".meta").exists()
+        || target_dir.join(".meta.yaml").exists()
+        || target_dir.join(".meta.yml").exists();
+
+    if !has_meta_config {
+        println!(
+            "{}",
+            "Warning: No .meta config found in current directory.".yellow()
+        );
+    }
+
+    // Create directories
+    for dir in [&skills_dir, &rules_dir] {
+        if !dir.exists() {
+            fs::create_dir_all(dir)?;
+        }
+    }
+
+    let mut installed = 0;
+    let overwrite = force || update;
+
+    // Install Ollama skills
+    for (filename, content) in SKILLS_OLLAMA {
+        let target_path = skills_dir.join(filename);
+        if target_path.exists() && !overwrite {
+            continue;
+        }
+        write_file(&target_path, content, verbose)?;
+        installed += 1;
+    }
+
+    // Install Ollama rules
+    for (filename, content) in RULES_OLLAMA {
+        let target_path = rules_dir.join(filename);
+        if target_path.exists() && !overwrite {
+            continue;
+        }
+        write_file(&target_path, content, verbose)?;
+        installed += 1;
+    }
+
+    if installed > 0 {
+        println!(
+            "{} Installed {} Ollama-specific file(s) to .claude/",
+            "✓".green(),
+            installed
+        );
+        println!("  Skills: .claude/skills/ (added meta-ollama.md)");
+        println!("  Rules:  .claude/rules/ (added ollama-provider.md)");
+    }
+
+    Ok(())
 }
 
 /// Install Claude Code skills and hook configuration into a specific directory

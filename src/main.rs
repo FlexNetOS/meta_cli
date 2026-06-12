@@ -184,6 +184,16 @@ enum InitCommands {
         #[arg(short, long)]
         update: bool,
     },
+    /// Install Ollama-specific skills and rules for this meta repo
+    Ollama {
+        /// Overwrite all existing files
+        #[arg(short, long)]
+        force: bool,
+
+        /// Update skills and rules only
+        #[arg(short, long)]
+        update: bool,
+    },
 }
 
 /// Arguments for `meta plugin`
@@ -498,6 +508,9 @@ fn main() -> Result<()> {
                 None => init::InitCommand::None,
                 Some(InitCommands::Claude { force, update }) => {
                     init::InitCommand::Claude { force, update }
+                }
+                Some(InitCommands::Ollama { force, update }) => {
+                    init::InitCommand::Ollama { force, update }
                 }
             };
             init::handle_init_command(cmd, cli.verbose)
