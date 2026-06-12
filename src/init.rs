@@ -36,9 +36,7 @@ const SKILLS: &[(&str, &str)] = &[
     ("meta-safety.md", SKILL_META_SAFETY),
 ];
 
-const SKILLS_OLLAMA: &[(&str, &str)] = &[
-    ("meta-ollama.md", SKILL_META_OLLAMA),
-];
+const SKILLS_OLLAMA: &[(&str, &str)] = &[("meta-ollama.md", SKILL_META_OLLAMA)];
 
 /// All available rules with their filenames
 const RULES: &[(&str, &str)] = &[
@@ -46,9 +44,7 @@ const RULES: &[(&str, &str)] = &[
     ("meta-destructive-commands.md", RULE_DESTRUCTIVE_COMMANDS),
 ];
 
-const RULES_OLLAMA: &[(&str, &str)] = &[
-    ("ollama-provider.md", RULE_OLLAMA_PROVIDER),
-];
+const RULES_OLLAMA: &[(&str, &str)] = &[("ollama-provider.md", RULE_OLLAMA_PROVIDER)];
 
 /// Typed init subcommand, mirroring the clap-parsed structure from main.
 pub enum InitCommand {
