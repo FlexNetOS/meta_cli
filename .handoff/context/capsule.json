@@ -1,0 +1,10 @@
+{
+  "schema": "handoff.context_capsule.v1",
+  "project_name": "meta_cli",
+  "role": "The host `meta` binary: multi-repo workspace management CLI that clones/coordinates child repos, runs parallel cross-repo exec, manages worktrees and dependency graphs. Discovers and dispatches to subprocess plugins via a large registry (registry.rs 70K, subprocess_plugins.rs 45K) and installs Ollama skills/rules via `meta init ollama`.",
+  "plane": "foundation",
+  "tier": "A",
+  "northstar": "Meta makes multi-repo feel like monorepo without the downsides; the canon machinery stays green, versioned by the parent distribution.",
+  "next_command": "Plan in kb first (git kb board); mint execution cards via hf (ADR-0003)",
+  "source": "ARCHITECTURE-TRUTH.md census 2026-06-12"
+}
