@@ -1,8 +1,9 @@
-# Ollama Provider Discipline
+# Local/Lower-Cost Provider Discipline
 
-When operating in this workspace under the Ollama provider:
+When using a local or lower-cost model, preserve the same full-auto contract while reducing token burn.
 
-1. **Prioritize Local Knowledge**: Use `meta context` and `git kb recall` to understand the workspace instead of asking the user for basic info.
-2. **Compress Output**: Always use `rtk` (if available) when running commands that produce large logs (e.g., `meta exec -- cargo build | rtk`).
-3. **Chunk Large Tasks**: Break down multi-repo refactors into smaller, verifiable steps to accommodate local model context limits.
-4. **Tool Verification**: Confirm tool availability (like `meta`, `rtk`, `ollama`) before suggesting complex workflows.
+1. Start from source truth: `hf resume`, task cards, ADRs, and relevant code.
+2. Use `rtk` for large logs and summarize before handing context to larger models.
+3. Split work into bounded sidecars: research, verification, doc/rule updates, and independent file scopes.
+4. Escalate only the hard judgment/code-review slice to a stronger model; keep mechanical edits and searches local.
+5. Never accept absence of failure as proof. Require positive artifacts: tests run, diffs, check names, and witnessed ledger events.
