@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{Args, CommandFactory, Parser, Subcommand};
 use colored::*;
 use loop_lib::run;
@@ -11,6 +11,7 @@ use std::path::PathBuf;
 mod init;
 mod registry;
 mod subprocess_plugins;
+mod sync_skills;
 use meta_cli::worktree;
 use subprocess_plugins::{PluginRequestOptions, SubprocessPluginManager};
 
@@ -139,6 +140,8 @@ enum Commands {
     Help,
     /// Initialize meta integrations
     Init(InitArgs),
+    /// Sync skills from registry to target repos (upgrade-only)
+    Sync(SyncSkillsArgs),
     /// Manage plugins
     Plugin(PluginArgs),
     #[command(external_subcommand)]
@@ -243,6 +246,26 @@ enum PluginCommands {
         #[arg(long)]
         check: bool,
     },
+}
+
+/// Arguments for `meta sync skills`
+#[derive(Args)]
+struct SyncSkillsArgs {
+    /// Which repos to target: pilot (handoff + ruflo), expand (ai/orchestration/canon), all (all with .claude/), conformance (drift only)
+    #[arg(long, default_value = "pilot")]
+    mode: String,
+
+    /// Upgrade existing skills: copy from registry if registry version > deployed version
+    #[arg(long)]
+    upgrade: bool,
+
+    /// Allow overwriting identical files (still never deletes)
+    #[arg(long)]
+    force: bool,
+
+    /// Apply changes (deploy files); default behavior is dry-run (omit --apply for dry-run)
+    #[arg(long)]
+    apply: bool,
 }
 
 // === Help Utilities ===
@@ -514,6 +537,28 @@ fn main() -> Result<()> {
                 }
             };
             init::handle_init_command(cmd, cli.verbose)
+        }
+        Some(Commands::Sync(args)) => {
+            // Parse mode from string argument
+            let mode = match args.mode.as_str() {
+                "expand" => sync_skills::Mode::Expand,
+                "all" => sync_skills::Mode::All,
+                "conformance" => sync_skills::Mode::Conformance,
+                _ => sync_skills::Mode::Pilot,
+            };
+
+            let meta_root =
+                std::env::current_dir().context("Failed to determine current directory")?;
+
+            let args_inner = sync_skills::SyncSkillsArgs {
+                mode,
+                upgrade: args.upgrade,
+                force: args.force,
+                json_output: cli.json, // use global --json from Cli struct (not local)
+                dry_run: !args.apply,  // default to dry-run unless --apply is given
+            };
+
+            sync_skills::handle_sync_skills(args_inner, &meta_root)
         }
         Some(Commands::Plugin(args)) => handle_plugin_command(
             args.command,
