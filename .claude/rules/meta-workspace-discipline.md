@@ -1,24 +1,22 @@
-# Handoff Workspace Discipline
+# Meta Workspace Discipline
 
-You are working in the **handoff** kernel workspace. The repo is the source of truth; chat history is not.
+You are working in a **meta-repo** — multiple independent git repositories managed together.
 
-## Full-auto operating model
+## Required Behaviors
 
-- Default to autonomous delivery: claim, implement, verify, ship, and hand off without asking unless there is a true owner wall.
-- Designated model agents replace human review for reversible work: use the AI Gatekeeper/status-check path, not GitHub bot approvals.
-- Keep the Gold World safe: every meaningful change must preserve integrity, reversibility, and measurable capability gain.
+1. **Use `meta git` for cross-repo operations** — NOT raw `git`
+   - `meta git status` shows all repos at once
+   - `meta git commit -m "msg"` commits in all dirty repos
 
-## Required sequence
+2. **Use `meta exec` for cross-repo commands** — NOT `cd <repo> && cmd`
+   - `meta exec -- npm install` runs in all repos
+   - `meta --include X,Y exec -- cmd` targets specific repos
 
-1. `hf resume` at session start.
-2. `hf claim <id>` before edits.
-3. Create/use a fresh batch worktree from `develop`; never make task edits on protected trunk/base branches.
-4. Use the ADR-0018 D8 grit cycle for code coordination: `scripts/grit-shared.sh claim <file::symbol>` before editing, work in the grit worktree, then `scripts/grit-shared.sh done` before ship.
-5. Run the task's tests with `hf test <id>` or the card's `test_commands` directly, then `hf checkpoint <id> "evidence"`.
-6. Before stopping: `hf drift`, `hf handoff`.
+3. **Check scope before committing**
+   - Run `meta git status` to see which repos have changes
+   - Verify you intend to commit in all listed repos
 
-## Branch and promotion discipline
-
-- PRs target `develop`; trunk (`master`, with `main` as alias) is promoted by the witnessed develop→trunk machinery.
-- Do not merge `develop` into local `master` by hand; if trunk diverges, treat it as reconciliation work.
-- Use `hf ship <id> --base develop` / PR automation for publishable work.
+4. **Target precisely with filters**
+   - `--include repo1,repo2` — only these repos
+   - `--exclude repo3` — skip this repo
+   - `--tag backend` — only repos with this tag
