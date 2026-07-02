@@ -20,3 +20,9 @@ You are working in a **meta-repo** — multiple independent git repositories man
    - `--include repo1,repo2` — only these repos
    - `--exclude repo3` — skip this repo
    - `--tag backend` — only repos with this tag
+
+5. **Use local-first validation by default**
+   - Heavy validation belongs in the local checkout or self-hosted runner first
+   - GitHub Actions should be the smallest useful receipt for the pushed commit
+   - Full cloud CI requires release/manual/label/schedule/self-hosted/operator-task intent
+   - Token-consuming AI/Codex/OpenAI checks must never run from default PR/push CI

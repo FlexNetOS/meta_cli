@@ -17,10 +17,10 @@ The AI Gatekeeper must judge blast radius, not just diff shape. When preparing a
 Use MCP/git-kb when available:
 
 ```bash
-git kb symbols <file-or-query>
-git kb callers <symbol>
-git kb callees <symbol>
-git kb impact <file>
+git-kb code symbols <file-or-query>
+git-kb code callers <symbol>
+git-kb code callees <symbol>
+git-kb code impact <file>
 ```
 
 If the index is absent or stale, note the degradation and fall back to direct source inspection.

@@ -95,6 +95,26 @@ The `--depth N` flag limits recursion depth.
 | `meta project list` | List all child projects |
 | `meta init claude` | Install these skills |
 
+## Bootstrap Command Semantics
+
+GitKB and Meta bootstrap commands are distinct:
+
+| Command | Meaning |
+|---------|---------|
+| `git-kb init` | Create/configure the repository knowledge base. |
+| `git-kb init codex` | Install GitKB Codex integration files. |
+| `git-kb init claude` | Install GitKB Claude integration files. |
+| `meta init claude` | Install Meta-owned Claude skills/rules/hooks in current `meta 0.2.22`. |
+| `meta exec -- <cmd>` | Run `<cmd>` across repos selected from `.meta.yaml`. |
+
+There is no `meta exec init` subcommand. To initialize GitKB/Codex across a fleet, run GitKB through `meta exec`:
+
+```bash
+meta exec -- /home/flexnetos/FlexNetOS/usr/bin/git-kb init
+meta exec -- /home/flexnetos/FlexNetOS/usr/bin/git-kb init codex
+```
+
+
 ## MCP Tools for Workspace Discovery
 
 When the meta MCP server is available, these tools provide structured JSON for programmatic workspace operations:

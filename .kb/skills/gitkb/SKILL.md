@@ -36,7 +36,7 @@ git-kb set <slug> --status active            # Quick metadata update (auto-commi
 
 ```bash
 git-kb checkout <slug>                       # Materialize for editing
-git-kb checkout --path context/              # Checkout by path prefix
+git-kb checkout context/              # Checkout by path prefix
 git-kb status --json                         # Show pending changes
 git-kb diff                                  # Show line-level diffs
 git-kb commit -m "msg" <pathspecs...>        # Save changes to database

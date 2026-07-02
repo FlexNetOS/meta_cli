@@ -132,6 +132,21 @@ meta --silent exec -- npm install
 
 ## Practical Examples
 
+## Local-First Validation
+
+In FlexNetOS operator-owned workspaces, prefer local validation as the main feedback loop and GitHub Actions as a recorded receipt for the pushed commit. Run heavy checks with scoped `meta exec` first:
+
+```bash
+meta project list --json
+meta git status
+meta --include meta_cli,meta_git_cli exec -- cargo test
+meta --include meta_cli,meta_git_cli exec -- cargo clippy --all-targets -- -D warnings
+meta --ordered exec -- cargo test
+```
+
+Escalate to full GitHub cloud CI only for release tags, `workflow_dispatch`, approved labels such as `run-full-ci`, scheduled maintenance, self-hosted runner receipts, or an explicit operator task. Never add token-consuming AI/Codex/OpenAI checks to default PR/push CI.
+
+
 ### Build Everything
 ```bash
 meta exec -- cargo build --release

@@ -7,9 +7,9 @@ Maintain handoff's planning plane and execution plane together, but never confus
 handoff has its OWN durable `.kb/`. Load context before non-trivial work:
 
 ```bash
-git kb list --path context/
-git kb checkout --path context/
-git kb board
+git-kb list --path context/
+git-kb checkout context/
+git-kb board
 ```
 
 If no task exists for non-trivial work, create the kb task first; for existing HFTASK cards, use the card/ledger and mirror progress back.
